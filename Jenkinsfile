@@ -41,14 +41,36 @@ pipeline {
                 }
             }
         }
+
+        stage('Unit Testing') {
+            steps {
+                script {
+                    sh """
+                    echo "unit tests
+                    """
+                }
+            }
+        }
 stage('Docker build') {
     steps {
-        script{
+        script {
             withAWS(credentials: 'aws-cred', region: 'us-east-1') {
+
                 sh """
-                 aws ecr get-login-password --region ${REGION}  | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-                 docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${USERNAME}/${COMPONENT}:${appVersion} .
-                 docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${USERNAME}/${COMPONENT}:${appVersion}
+                # Login to ECR
+                aws ecr get-login-password --region ${REGION} | docker login \
+                --username AWS \
+                --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+
+                # Build Docker image
+                docker build -t ${COMPONENT}:${appVersion} .
+
+                # Tag Image
+                docker tag ${COMPONENT}:${appVersion} \
+                ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${COMPONENT}:${appVersion}
+
+                # Push to ECR
+                docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${COMPONENT}:${appVersion}
                 """
             }
         }

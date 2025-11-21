@@ -62,7 +62,7 @@ stage('Docker build') {
                     --password-stdin ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com
 
                 echo "Building Docker image..."
-                docker build -t ${USERNAME}/${COMPONENT}:${appVersion} .
+                docker build --network=host -t ${USERNAME}/${COMPONENT}:${appVersion} .
 
                 echo "Tagging Docker image for ECR..."
                 docker tag ${USERNAME}/${COMPONENT}:${appVersion} \
@@ -77,6 +77,7 @@ stage('Docker build') {
         }
     }
 }
+
 
 
         

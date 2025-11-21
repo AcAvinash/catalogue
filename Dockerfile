@@ -2,7 +2,7 @@ FROM node:20-alpine3.20 AS builder
 WORKDIR /opt/server
 COPY package.json .
 COPY *.js .
-RUN npm install
+RUN npm install --registry=https://registry.npmjs.org/ --retry 5
 
 FROM node:20-alpine3.20
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop

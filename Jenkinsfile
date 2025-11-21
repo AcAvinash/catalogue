@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    echo "unit tests
+                    echo "unit tests"
                     """
                 }
             }
@@ -60,17 +60,17 @@ stage('Docker build') {
                 # Login to ECR
                 aws ecr get-login-password --region ${REGION} | docker login \
                 --username AWS \
-                --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+                --password-stdin ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com
 
                 # Build Docker image
                 docker build -t ${COMPONENT}:${appVersion} .
 
                 # Tag Image
                 docker tag ${COMPONENT}:${appVersion} \
-                ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${COMPONENT}:${appVersion}
+                ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
 
                 # Push to ECR
-                docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${COMPONENT}:${appVersion}
+                docker push ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
                 """
             }
         }

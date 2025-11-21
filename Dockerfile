@@ -1,15 +1,12 @@
-FROM node:20-alpine3.20 AS builder
-WORKDIR /opt/server
-COPY package.json .
-COPY *.js .
-RUN npm install
 
-FROM node:20-alpine3.20
+FROM node:18.19.1-alpine3.19
+EXPOSE 8080
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
-RUN apk update && apk add --no-cache --upgrade musl openssl
-ENV MONGO="true" \
-    MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
+ENV MONGO=true
+RUN chown roboshop:roboshop /opt/server
 USER roboshop
-COPY --from=builder /opt/server /opt/server
-CMD ["node","server.js"]
+COPY package.json /opt/server/
+COPY server.js /opt/server/
+RUN npm install
+CMD ["node", "server.js"]

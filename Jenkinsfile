@@ -54,28 +54,30 @@ pipeline {
 stage('Docker build') {
     steps {
         script {
-            withAWS(credentials: 'aws-cred', region: 'us-east-1') {
-
+            withAWS(credentials: 'aws-cred', region: "${REGION}") {
                 sh """
-                # Login to ECR
+                echo "Logging into AWS ECR..."
                 aws ecr get-login-password --region ${REGION} | docker login \
-                --username AWS \
-                --password-stdin ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com
+                    --username AWS \
+                    --password-stdin ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com
 
-                # Build Docker image
-                docker build -t ${COMPONENT}:${appVersion} .
+                echo "Building Docker image..."
+                docker build -t ${USERNAME}/${COMPONENT}:${appVersion} .
 
-                # Tag Image
-                docker tag ${COMPONENT}:${appVersion} \
-                ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
+                echo "Tagging Docker image for ECR..."
+                docker tag ${USERNAME}/${COMPONENT}:${appVersion} \
+                    ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
 
-                # Push to ECR
+                echo "Pushing Docker image to ECR..."
                 docker push ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
+
+                echo "Docker image pushed successfully!"
                 """
             }
         }
     }
 }
+
 
         
     }

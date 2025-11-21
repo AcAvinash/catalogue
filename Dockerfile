@@ -23,9 +23,9 @@ FROM node:20-alpine3.20
 # Create non-root user
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 
-# Install runtime dependencies
-RUN apk update && apk add --no-cache musl openssl
 
+
+RUN apk update && apk add --no-cache musl openssl
 # Set environment variables
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
@@ -39,8 +39,11 @@ USER roboshop
 # Copy built app and dependencies from builder stage
 COPY --from=builder /opt/server /opt/server
 
+
 # Expose app port
 EXPOSE 8080
 
 # Start the application
 CMD ["node", "server.js"]
+
+

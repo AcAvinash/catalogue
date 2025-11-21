@@ -66,10 +66,10 @@ stage('Docker build') {
 
                 echo "Tagging Docker image for ECR..."
                 docker tag ${USERNAME}/${COMPONENT}:${appVersion} \
-                    ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
+                    ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${USERNAME}/${COMPONENT}:${appVersion}
 
                 echo "Pushing Docker image to ECR..."
-                docker push ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${COMPONENT}:${appVersion}
+                docker push ${ACC_ID}.dkr.ecr.${REGION}.amazonaws.com/${USERNAME}/${COMPONENT}:${appVersion}
 
                 echo "Docker image pushed successfully!"
                 """
